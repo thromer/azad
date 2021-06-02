@@ -55,6 +55,8 @@ interface IOrderDetails {
     postage: string;
     postage_refund: string;
     gift: string;
+    reward: string;
+    credit: string;
     us_tax: string;
     vat: string;
     gst: string;
@@ -198,6 +200,44 @@ function extractDetailFromDoc(
                 return a.replace('-', '');
             }
         }
+        return '';
+    };
+
+    const reward = function(): string {
+        const a = extraction.by_regex(
+            [ '//div[contains(@id,"od-subtotals")]//span[contains(text(),"Rewards Points")]/parent::div/following-sibling::div/span' ],
+            null,
+            null,
+            doc.documentElement,
+            context,
+        );
+        if ( a && /\d/.test(a)) {
+            return a.replace('-', '');
+        }
+        return '';
+    };
+
+    // currently show as negative :(
+    const credit = function(): string {
+        const a = extraction.by_regex(
+            [ '//span[@id="ufpo-total-savings-amount"]',
+	      '//div[contains(@id,"od-subtotals")]//span[contains(text(),"Courtesy Credit")]/parent::div/following-sibling::div/span',
+	      '//div[contains(@id,"od-subtotals")]//span[contains(text(),"Promotion Applied")]/parent::div/following-sibling::div/span',
+	      '//div[contains(@id,"od-subtotals")]//span[contains(text(),"Your Coupon Savings")]/parent::div/following-sibling::div/span',
+	      '//div[contains(@id,"od-subtotals")]//span[contains(text(),"Subscribe")]/parent::div/following-sibling::div/span'
+	      // '//div[contains(@id,"od-subtotals")]//span[contains(text(),"Subscribe & Save")]/parent::div/following-sibling::div/span'
+	      // '//div[contains(@id,"od-subtotals")]//span[starts-with((normalize-space(text())),"Subscribe")]/parent::div/following-sibling::div/span'
+	    ],
+            null,
+            null,
+            doc.documentElement,
+            context,
+        );
+	// console.log('credit: found ' + a)
+        if ( a && /\d/.test(a)) {
+            return a.replace('-', '');
+        }
+	// console.log('credit: but no match')
         return '';
     };
 
@@ -406,6 +446,8 @@ function extractDetailFromDoc(
         postage: postage(),
         postage_refund: postage_refund(),
         gift: gift(),
+        reward: reward(),
+        credit: credit(),
         us_tax: us_tax(),
         vat: vat(),
         gst: cad_gst(),
@@ -475,6 +517,8 @@ export interface IOrder extends azad_entity.IEntity {
 
     date(): Promise<string>;
     gift(): Promise<string>;
+    reward(): Promise<string>;
+    credit(): Promise<string>;
     gst(): Promise<string>;
     item_list(): Promise<item.IItem[]>;
     items(): Promise<item.Items>;
@@ -583,6 +627,12 @@ class Order {
     gift(): Promise<string> {
         return this._detail_dependent_promise( detail => detail.gift );
     };
+    reward(): Promise<string> {
+        return this._detail_dependent_promise( detail => detail.reward );
+    };
+    credit(): Promise<string> {
+        return this._detail_dependent_promise( detail => detail.credit );
+    };
     us_tax(): Promise<string> {
         return this._detail_dependent_promise( detail => detail.us_tax )
     }
@@ -657,7 +707,7 @@ class OrderImpl {
             this.id = 'UNKNOWN_ORDER_ID';
             throw error;
         }
-
+	// console.log('order id ' + this.id)
         const context = 'id:' + this.id;
         this.date = date.normalizeDateString(
             util.defaulted(

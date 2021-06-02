@@ -30,6 +30,7 @@ export function by_regex(
 			);
         }
         if ( a ) {
+	    // console.log(xpath + ' matched')
             if ( regex ) {
                 const match: RegExpMatchArray | null | undefined
                     = a.textContent?.trim().match(regex);
@@ -39,6 +40,7 @@ export function by_regex(
             }
             return util.defaulted(a.textContent?.trim(), null);
         }
+	// console.log(xpath + ' did not match')
     }
     try {
         return default_value!.toString();

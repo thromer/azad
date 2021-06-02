@@ -138,6 +138,16 @@ const ORDER_COLS: ColSpec[] = [
         is_numeric: true
     },
     {
+        field_name: 'reward',
+        value_promise_func_name: 'reward',
+        is_numeric: true
+    },
+    {
+        field_name: 'credit',
+        value_promise_func_name: 'credit',
+        is_numeric: true
+    },
+    {
         field_name: 'VAT',
         value_promise_func_name: 'vat',
         is_numeric: true,

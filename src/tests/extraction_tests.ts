@@ -7,6 +7,37 @@ import * as tests from './tests';
 import * as order_data from './order_data';
 import * as extraction from '../js/extraction';
 
+const thromerExtractionTest = function(): boolean {
+    const order_detail_html = order_data.order_thromer_html();
+    const context = 'thromer_extraction_test';
+    const parser = new DOMParser();
+    const doc = parser.parseFromString( order_detail_html, 'text/html' );
+    const a = extraction.by_regex(
+        [
+	    '//span[@id="ufpo-total-savings-amount"]',
+	    '//div[contains(@id,"od-subtotals")]//span[contains(text(),"Courtesy Credit")]/parent::div/following-sibling::div/span',
+	    '//div[contains(@id,"od-subtotals")]//span[contains(text(),"Promotion Applied")]/parent::div/following-sibling::div/span',
+	    '//div[contains(@id,"od-subtotals")]//span[contains(text(),"Your Coupon Savings")]/parent::div/following-sibling::div/span',
+	    '//div[contains(@id,"od-subtotals")]//span[contains(text(),"Subscribe")]/parent::div/following-sibling::div/span'
+	    // '//div[contains(@id,"od-subtotals")]//span[contains(text(),"Subscribe & Save")]/parent::div/following-sibling::div/span'
+	    // '//div[contains(@id,"od-subtotals")]//span[starts-with((normalize-space(text())),"Subscribe")]/parent::div/following-sibling::div/span'
+	],
+        null,
+        null,
+        doc.documentElement,
+        context,
+    );
+    let answer = 99999
+    if ( a ) {
+	console.log('match got "' + a + '"')
+        if (/\d/.test(a)) {
+            answer = a.replace('-', '');
+        }
+    }
+    console.log('answer "' + answer + '"')
+    return answer == '$0.32';
+};
+
 const detailExtractionTest = function(): boolean {
     const order_detail_html = order_data.order_D01_9960417_3589456_html();
     const context = 'detail_extraction_test';
@@ -37,6 +68,7 @@ const detailExtractionTest = function(): boolean {
 
 const extraction_tests = {
     detail_extraction_test: detailExtractionTest,
+    thromer_extraction_test: thromerExtractionTest,
 };
 
 tests.register('extraction_tests', extraction_tests);
