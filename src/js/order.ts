@@ -14,6 +14,29 @@ import * as urls from './url';
 import * as util from './util';
 import * as item from './item';
 
+function credit_function = function(doc, context): string {
+    const a = extraction.by_regex(
+        [ '//span[@id="ufpo-total-savings-amount"]',
+	  '//div[contains(@id,"od-subtotals")]//span[contains(text(),"Courtesy Credit")]/parent::div/following-sibling::div/span',
+	  '//div[contains(@id,"od-subtotals")]//span[contains(text(),"Promotion Applied")]/parent::div/following-sibling::div/span',
+	  '//div[contains(@id,"od-subtotals")]//span[contains(text(),"Your Coupon Savings")]/parent::div/following-sibling::div/span',
+	  '//div[contains(@id,"od-subtotals")]//span[contains(text(),"Subscribe")]/parent::div/following-sibling::div/span'
+	  // '//div[contains(@id,"od-subtotals")]//span[contains(text(),"Subscribe & Save")]/parent::div/following-sibling::div/span'
+	  // '//div[contains(@id,"od-subtotals")]//span[starts-with((normalize-space(text())),"Subscribe")]/parent::div/following-sibling::div/span'
+	],
+        null,
+        null,
+        doc.documentElement,
+        context,
+    );
+    // console.log('credit: found ' + a)
+    if ( a && /\d/.test(a)) {
+        return a.replace('-', '');
+    }
+    // console.log('credit: but no match')
+    return '';
+};
+
 function getField(
     xpath: string,
     elem: HTMLElement,
@@ -217,29 +240,9 @@ function extractDetailFromDoc(
         return '';
     };
 
-    // currently show as negative :(
     const credit = function(): string {
-        const a = extraction.by_regex(
-            [ '//span[@id="ufpo-total-savings-amount"]',
-	      '//div[contains(@id,"od-subtotals")]//span[contains(text(),"Courtesy Credit")]/parent::div/following-sibling::div/span',
-	      '//div[contains(@id,"od-subtotals")]//span[contains(text(),"Promotion Applied")]/parent::div/following-sibling::div/span',
-	      '//div[contains(@id,"od-subtotals")]//span[contains(text(),"Your Coupon Savings")]/parent::div/following-sibling::div/span',
-	      '//div[contains(@id,"od-subtotals")]//span[contains(text(),"Subscribe")]/parent::div/following-sibling::div/span'
-	      // '//div[contains(@id,"od-subtotals")]//span[contains(text(),"Subscribe & Save")]/parent::div/following-sibling::div/span'
-	      // '//div[contains(@id,"od-subtotals")]//span[starts-with((normalize-space(text())),"Subscribe")]/parent::div/following-sibling::div/span'
-	    ],
-            null,
-            null,
-            doc.documentElement,
-            context,
-        );
-	// console.log('credit: found ' + a)
-        if ( a && /\d/.test(a)) {
-            return a.replace('-', '');
-        }
-	// console.log('credit: but no match')
-        return '';
-    };
+	return credit_function(doc, context);
+    }
 
     const postage = function(): string {
         return util.defaulted(

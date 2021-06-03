@@ -38,6 +38,16 @@ const thromerExtractionTest = function(): boolean {
     return answer == '$0.32';
 };
 
+const thromerExtractionTest2 = function(): boolean {
+    const order_detail_html = order_data.order_thromer_html()
+    const context = 'thromer_extraction_test2'
+    const parser = new DOMParser()
+    const doc = parser.parseFromString( order_detail_html, 'text/html' )
+    answer = order.credit_function(doc, context)
+    console.log('answer "' + answer + '"')
+    return answer == '$0.32';
+};
+
 const detailExtractionTest = function(): boolean {
     const order_detail_html = order_data.order_D01_9960417_3589456_html();
     const context = 'detail_extraction_test';
