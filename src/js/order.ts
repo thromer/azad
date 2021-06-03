@@ -14,28 +14,37 @@ import * as urls from './url';
 import * as util from './util';
 import * as item from './item';
 
-function credit_function = function(doc, context): string {
-    const a = extraction.by_regex(
-        [ '//span[@id="ufpo-total-savings-amount"]',
-	  '//div[contains(@id,"od-subtotals")]//span[contains(text(),"Courtesy Credit")]/parent::div/following-sibling::div/span',
-	  '//div[contains(@id,"od-subtotals")]//span[contains(text(),"Promotion Applied")]/parent::div/following-sibling::div/span',
-	  '//div[contains(@id,"od-subtotals")]//span[contains(text(),"Your Coupon Savings")]/parent::div/following-sibling::div/span',
-	  '//div[contains(@id,"od-subtotals")]//span[contains(text(),"Subscribe")]/parent::div/following-sibling::div/span'
-	  // '//div[contains(@id,"od-subtotals")]//span[contains(text(),"Subscribe & Save")]/parent::div/following-sibling::div/span'
-	  // '//div[contains(@id,"od-subtotals")]//span[starts-with((normalize-space(text())),"Subscribe")]/parent::div/following-sibling::div/span'
-	],
-        null,
-        null,
-        doc.documentElement,
-        context,
-    );
-    // console.log('credit: found ' + a)
-    if ( a && /\d/.test(a)) {
-        return a.replace('-', '');
+export function credit_function(doc: HTMLDocument, context: string): string {
+    let amt: string = null
+    try {
+	amt = util.findSingleNodeValue(
+            '//span[@id="ufpo-total-savings-amount"]', doc.documentElement, context,)
+    } catch ( ex ) {
+	console.log('Caught ' + JSON.stringify(ex))
     }
-    // console.log('credit: but no match')
-    return '';
-};
+    if (amt) {
+	amt = util.defaulted(amt.textContext?.trim(), null)
+	amt = amt.replace('$', '')
+    } else {
+	amt = '0'
+    }
+    const ufpo_total_savings_amount: float = parseFloat(amt)
+
+    let stuff: string = '//div[contains(@id,"od-subtotals")]//div[contains(@class,"a-text-right")]//span/text()'
+    let discounts: float = 0
+    try {
+	let discounts_floats: float[] = util.findMultipleNodeValues(stuff, doc.documentElement).map(
+	    e => parseFloat(e.textContent?.replace('$','').trim()))
+	console.log('discounts_floats ' + JSON.stringify(discounts_floats))
+	discounts_floats = discounts_floats.filter(e => e < 0)
+	console.log('discounts_floats ' + JSON.stringify(discounts_floats))
+	discounts = discounts_floats.reduce((a, c) => a + c, 0)
+	console.log('discounts ' + JSON.stringify(discounts))
+    } catch ( ex ) {
+	console.log('Caught ' + JSON.stringify(ex))
+    }
+    return '$' + (0 - ufpo_total_savings_amount - discounts).toString()
+}
 
 function getField(
     xpath: string,

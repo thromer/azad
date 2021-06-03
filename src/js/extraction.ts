@@ -76,7 +76,7 @@ export function payments_from_invoice(doc: HTMLDocument): string[] {
         return payments;
     };
     const strategy_2 = () => {
-        const new_style_payments = util.findMultipleNodeValues(
+        const new_style_payments = utilfindMultipleNodeValues(
             '//*[contains(text(), "Payment Method")]/../self::*',
             doc.documentElement
         ).map(
