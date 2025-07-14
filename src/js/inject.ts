@@ -92,7 +92,10 @@ async function fetchAndShowOrdersByYears(
     (_date: Date|null) => true,  // DateFilter predicate
   );
 
-  return azad_table.display(order_promises, true, ports.getBackgroundPort);
+  // TODO(thromer) accept a visitor
+  (await order_promises).forEach((o) => console.log(`THROMER time to visit ${o.id}`))
+  // return azad_table.display(order_promises, true, ports.getBackgroundPort);
+  return Promise.resolve(undefined)
 }
 
 async function fetchAndShowOrdersByRange(
@@ -130,7 +133,10 @@ async function fetchAndShowOrdersByRange(
     },
   );
 
-  return azad_table.display(orders, beautiful_table, ports.getBackgroundPort);
+  // TODO(thromer) accept a visitor
+  (await orders).forEach((o) => console.log(`THROMER time to visit ${o.id}`))
+  // return azad_table.display(orders, beautiful_table, ports.getBackgroundPort);
+  return Promise.resolve(undefined)
 }
 
 async function fetchShowAndSendItemsByRange(
