@@ -155,7 +155,7 @@ function addTransactionTable(
 }
 
 async function addTable(
-    doc: HTMLDocument,
+    doc: Document,
     entities: azad_entity.IEntity[],
     cols: Promise<colspec.ColSpec[]>
 ): Promise<HTMLTableElement> {
@@ -275,7 +275,8 @@ async function reallyDisplay(
   beautiful: boolean,
   getBackgroundPort: ()=>Promise<chrome.runtime.Port | null>,
 ): Promise<HTMLTableElement> {
-  console.log('amazon_order_history_table.reallyDisplay starting');
+  console.log('THROMER amazon_order_history_table.reallyDisplay starting how did we get here');
+  console.trace("THROMER amazon_order_history_table.reallyDisplay")
 
   for (const entry in order_map) {
     delete order_map[entry];
@@ -306,6 +307,7 @@ async function reallyDisplay(
   const table = await table_promise;
   banner.removeBanner();
 
+  console.log('THROMER amazon_order_history_table.reallyDisplay calling display')
   $( () => {
     if (beautiful) {
       datatable_wrap.destroy();
@@ -346,7 +348,7 @@ async function reallyDisplayTransactions(
   beautiful: boolean,
   getBackgroundPort: ()=>Promise<chrome.runtime.Port | null>,
 ): Promise<HTMLTableElement> {
-  console.log('amazon_order_history_table.reallyDisplay starting');
+  console.log('THROMER THIS  ONE? amazon_order_history_table.reallyDisplayTransactions starting');
 
   util.clearBody();
   banner.addBanner();
@@ -459,7 +461,8 @@ export async function display(
   getBackgroundPort: ()=>Promise<chrome.runtime.Port | null>,
 ): Promise<HTMLTableElement> {
   const orders = await orders_promise;
-  console.log('amazon_order_history_table.display starting');
+  console.log('THROMER amazon_order_history_table.display starting HOW DID WE GET HERE ');
+  console.trace("THROMER amazon_order_history_table.display")
 
   if (orders.length >= 500 && beautiful) {
     beautiful = false;

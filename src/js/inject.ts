@@ -69,6 +69,7 @@ function resetScheduler(purpose: string): void {
 async function fetchAndShowOrdersByYears(
   years: number[]
 ): Promise<HTMLTableElement|undefined> {
+  console.log(`THROMER fetchAndShowOrdersByYears`)
   const ezp_mode: boolean = await settings.getBoolean('ezp_mode');
 
   if ( ! ezp_mode ) {
@@ -93,7 +94,9 @@ async function fetchAndShowOrdersByYears(
   );
 
   // TODO(thromer) accept a visitor
-  (await order_promises).forEach((o) => console.log(`THROMER time to visit ${o.id}`))
+  const os = await order_promises
+  console.log(`THROMER time to log before visiting`)
+  os.forEach((o) => console.log(`THROMER time to visit ${o.id}`))
   // return azad_table.display(order_promises, true, ports.getBackgroundPort);
   return Promise.resolve(undefined)
 }
@@ -102,6 +105,7 @@ async function fetchAndShowOrdersByRange(
   start_date: Date, end_date: Date,
   beautiful_table: boolean,
 ): Promise<HTMLTableElement|undefined> {
+  console.log(`THROMER fetchAndShowOrdersByRange`)
   console.info(`fetchAndShowOrdersByRange(${start_date}, ${end_date})`);
 
   if ( document.visibilityState != 'visible' ) {
@@ -132,9 +136,10 @@ async function fetchAndShowOrdersByRange(
       return d! >= start_date && d! <= end_date;  // DateFilter
     },
   );
-
   // TODO(thromer) accept a visitor
-  (await orders).forEach((o) => console.log(`THROMER time to visit ${o.id}`))
+  const os = await orders
+  console.log(`THROMER time to log before visiting`)
+  os.forEach((o) => console.log(`THROMER time to visit ${o.id}`))
   // return azad_table.display(orders, beautiful_table, ports.getBackgroundPort);
   return Promise.resolve(undefined)
 }
