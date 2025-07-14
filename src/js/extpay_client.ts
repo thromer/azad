@@ -2,13 +2,13 @@
 
 'use strict';
 
-const ep = require('ExtPay');
+import ExtPay from 'extpay';
 
 // Apparently (https://github.com/glench/ExtPay#manifest-v3)
 // we should fetch a new ExtPay reference each time we need one (for async code)
 // but only initialise once with startBackground.
 function getExtPay(): any {
-  return ep.default('amazon-order-history-reporter-premium-annual');
+  return ExtPay('amazon-order-history-reporter-premium-annual');
 }
 
 try {
