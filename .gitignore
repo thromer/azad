@@ -9,3 +9,4 @@ node_modules
 src/tests/azad_test_data
 tmp
 utils/remote_logs/.venv
+.aider*
