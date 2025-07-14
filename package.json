@@ -8,7 +8,8 @@
     "scripts": {
         "init": "npm install --init",
         "clean": "rm -rf azad*.zip build/* build-node/*",
-        "build": "node utils/build.js",
+        "build": "node --max-old-space-size=4096 utils/build.js",
+        "build-low-mem": "node --max-old-space-size=2048 utils/build.js",
         "doc": "npx typedoc --entryPointStrategy Expand src/js",
         "lint": "tsc --strict --alwaysStrict --noEmit --noUnusedParameters --noImplicitReturns --noImplicitOverride --noImplicitThis --noFallthroughCasesInSwitch",
         "eslint": "eslint --ignore-path .gitignore --ext .js,.ts .",

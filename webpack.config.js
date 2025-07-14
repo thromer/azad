@@ -161,4 +161,17 @@ if (env.NODE_ENV === "development") {
     node_options.devtool = "inline-source-map";
 }
 
+// Optimize for low memory environments
+chrome_extension_options.optimization = {
+    ...chrome_extension_options.optimization,
+    minimize: env.NODE_ENV === "production",
+    splitChunks: false
+};
+
+node_options.optimization = {
+    ...node_options.optimization,
+    minimize: env.NODE_ENV === "production",
+    splitChunks: false
+};
+
 module.exports = [chrome_extension_options, node_options];
