@@ -396,7 +396,7 @@ async function reallyDisplayTransactions(
     },
   });
 
-  console.log('azad.reallyDisplay returning');
+  console.log('azad.reallyDisplayTransactions returning');
   return table;
 }
 
