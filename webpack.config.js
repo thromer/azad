@@ -165,13 +165,28 @@ if (env.NODE_ENV === "development") {
 chrome_extension_options.optimization = {
     ...chrome_extension_options.optimization,
     minimize: env.NODE_ENV === "production",
-    splitChunks: false
+    splitChunks: false,
+    // Reduce memory usage during compilation
+    removeAvailableModules: false,
+    removeEmptyChunks: false,
+    mergeDuplicateChunks: false,
 };
 
 node_options.optimization = {
     ...node_options.optimization,
     minimize: env.NODE_ENV === "production",
-    splitChunks: false
+    splitChunks: false,
+    // Reduce memory usage during compilation
+    removeAvailableModules: false,
+    removeEmptyChunks: false,
+    mergeDuplicateChunks: false,
 };
+
+// Add memory management settings
+chrome_extension_options.stats = 'errors-warnings';
+chrome_extension_options.cache = false;
+
+node_options.stats = 'errors-warnings';
+node_options.cache = false;
 
 module.exports = [chrome_extension_options, node_options];
